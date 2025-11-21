@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>TUKTUKTURBO</title>
+<link rel="stylesheet" href="style.css">
+<link rel="icon" href="https://takenupload.com/69200b8868997" type="image/png">
+</head>
+<body>
+<div id="chat-container">
+    <div id="header">AIXREY</div>
+    <div id="messages"></div>
+    <div id="input-container">
+        <textarea id="prompt" placeholder="Tulis pesan..." rows="2"></textarea>
+        <button id="send-btn">Kirim</button>
+    </div>
+</div>
+
+<script>
+const messagesEl = document.getElementById("messages");
+const promptEl = document.getElementById("prompt");
+const sendBtn = document.getElementById("send-btn");
+
+let chatHistory = [];
+let typingEl = null;
+
+sendBtn.addEventListener("click", sendMessage);
+promptEl.addEventListener("keypress", function(e){
+    if(e.key === "Enter" && !e.shiftKey){
+        e.preventDefault();
+        sendMessage();
+    }
+});
+
+function addMessage(text, role, isTyping=false) {
+    const msgEl = document.createElement("div");
+    msgEl.className = `message ${role}`;
+    if(isTyping){
+        msgEl.innerHTML = `<div class="typing"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>`;
+        typingEl = msgEl;
+    } else {
+        msgEl.textContent = text;
+        typingEl = null;
+    }
+    messagesEl.appendChild(msgEl);
+    scrollToBottom();
+}
+
+function removeTyping() {
+    if(typingEl){
+        messagesEl.removeChild(typingEl);
+        typingEl = null;
+    }
+}
+
+function scrollToBottom() {
+    messagesEl.scrollTop = messagesEl.scrollHeight;
+}
+
+async function sendMessage() {
+    const text = promptEl.value.trim();
+    if(!text) return;
+
+    addMessage(text, "user");
+    chatHistory.push({ role: "user", content: text });
+    promptEl.value = "";
+
+    addMessage("", "assistant", true);
+
+    try {
+        const res = await fetch("https://apichax.csrynaldifusototo.workers.dev/", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                messages: chatHistory,
+                model: "meta-llama/llama-3.2-3b-instruct",
+                stream: false
+            })
+        });
+        const data = await res.json();
+        removeTyping();
+        const reply = data.choices?.[0]?.message?.content || "No response";
+        addMessage(reply, "assistant");
+        chatHistory.push({ role: "assistant", content: reply });
+    } catch(e) {
+        removeTyping();
+        addMessage("Error: " + e.message, "assistant");
+    }
+}
+</script>
+</body>
+</html>
