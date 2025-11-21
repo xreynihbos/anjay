@@ -1,35 +1,50 @@
 /* style.css */
 
 body {
-    background: #0a0a0a;
+    margin: 0;
+    padding: 0;
     font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    background: #0a0a0a;
     display: flex;
     justify-content: center;
-    padding: 30px;
-    margin: 0;
+    align-items: center;
+    height: 100vh;
+    overflow: hidden;
     color: #fff;
 }
 
+/* Neon particle canvas */
+#particles {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+    pointer-events: none;
+}
+
+/* Chat container */
 #chat-container {
+    position: relative;
+    z-index: 1;
     width: 100%;
     max-width: 700px;
-    background: #111 url('https://takenupload.com/69200b8868997') no-repeat center center;
-    background-size: 150px 150px; /* ukuran logo */
+    background: #111 url('https://takenupload.com/69200ccfd62da') no-repeat center center;
+    background-size: 150px 150px;
     padding: 20px;
     border-radius: 20px;
-    box-shadow: 0 0 40px #00fff0aa;
+    box-shadow: 0 0 50px #00fff0aa;
     display: flex;
     flex-direction: column;
     height: 80vh;
-    position: relative;
 }
 
+/* Overlay to soften background */
 #chat-container::before {
     content: "";
     position: absolute;
     top:0; left:0;
     width: 100%; height: 100%;
-    background: rgba(0, 195, 255, 0.05); /* overlay neon tipis */
+    background: rgba(0,195,255,0.05);
     border-radius: 20px;
     pointer-events: none;
 }
